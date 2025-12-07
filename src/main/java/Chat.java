@@ -22,7 +22,33 @@ void main() throws IOException, InterruptedException {
 
         chatHistory.append("You: ").append(userInput).append("\n");
 
-        String jsonBody = """
+        String responseBody = client.sendRequest(jsonSchema(chatHistory.toString()));
+
+        JsonObject root = JsonParser.parseString(responseBody).getAsJsonObject();
+
+        String innerJson = root.getAsJsonArray("candidates")
+                .get(0).getAsJsonObject()
+                .getAsJsonObject("content")
+                .getAsJsonArray("parts")
+                .get(0).getAsJsonObject()
+                .get("text").getAsString();
+
+        List<MedicalCode> codes = gson.fromJson(innerJson, listType);
+
+        if (codes.isEmpty()) {
+            IO.println("Invalid query. Please provide medical documentation.");
+        } else {
+            for (MedicalCode code : codes) {
+                IO.println(code);
+            }
+        }
+    }
+    scanner.close();
+    IO.println("Chatbot session ended.");
+}
+
+public static String jsonSchema (String history) {
+    return """
                 {
                   "generationConfig": {
                     "response_mime_type": "application/json",
@@ -49,30 +75,5 @@ void main() throws IOException, InterruptedException {
                     }]
                   }]
                 }
-                """
-                .formatted(chatHistory);
-
-        String responseBody = client.sendRequest(jsonBody);
-
-        JsonObject root = JsonParser.parseString(responseBody).getAsJsonObject();
-
-        String innerJson = root.getAsJsonArray("candidates")
-                .get(0).getAsJsonObject()
-                .getAsJsonObject("content")
-                .getAsJsonArray("parts")
-                .get(0).getAsJsonObject()
-                .get("text").getAsString();
-
-        List<MedicalCode> codes = gson.fromJson(innerJson, listType);
-
-        if (codes.isEmpty()) {
-            IO.println("Invalid query. Please provide medical documentation.");
-        } else {
-            for (MedicalCode code : codes) {
-                IO.println(code);
-            }
-        }
-    }
-    scanner.close();
-    IO.println("Chatbot session ended.");
+                """.formatted(history);
 }
