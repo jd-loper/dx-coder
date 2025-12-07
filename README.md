@@ -20,7 +20,18 @@ Before running this project, ensure you have:
 1. **Java Development Kit (JDK)**.
 2. A **Google Gemini API Key** (Get one at [Google AI Studio](https://aistudio.google.com/)).
 
-## ▶️ Usage
+## Environment Variables
+
+**MacOS**:
+`export API_KEY="your_api_key"`\
+**Windows**:
+`set API_KEY="your_api_key"`
+
+**BASE_URL** is the API endpoint:\
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
+
+
+## Usage
 
 1.  **Interact:**
     Type a medical scenario into the console.
