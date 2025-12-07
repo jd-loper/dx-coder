@@ -20,12 +20,14 @@ void main() throws IOException, InterruptedException {
             break;
         }
 
+        // Builds a context window for the AI conversation history
         chatHistory.append("You: ").append(userInput).append("\n");
 
         String responseBody = client.sendRequest(jsonSchema(chatHistory.toString()));
 
         JsonObject root = JsonParser.parseString(responseBody).getAsJsonObject();
 
+        // Walks down the JSON tree to extract the necessary text field
         String innerJson = root.getAsJsonArray("candidates")
                 .get(0).getAsJsonObject()
                 .getAsJsonObject("content")
@@ -33,6 +35,7 @@ void main() throws IOException, InterruptedException {
                 .get(0).getAsJsonObject()
                 .get("text").getAsString();
 
+        // Maps the JSON response to a list of MedicalCode objects
         List<MedicalCode> codes = gson.fromJson(innerJson, listType);
 
         if (codes.isEmpty()) {
