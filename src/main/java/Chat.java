@@ -25,15 +25,7 @@ void main() throws IOException, InterruptedException {
 
         String responseBody = client.sendRequest(jsonSchema(chatHistory.toString()));
 
-        JsonObject root = JsonParser.parseString(responseBody).getAsJsonObject();
-
-        // Walks down the JSON tree to extract the necessary text field
-        String innerJson = root.getAsJsonArray("candidates")
-                .get(0).getAsJsonObject()
-                .getAsJsonObject("content")
-                .getAsJsonArray("parts")
-                .get(0).getAsJsonObject()
-                .get("text").getAsString();
+        String innerJson = parseResponse(responseBody);
 
         // Maps the JSON response to a list of MedicalCode objects
         List<MedicalCode> codes = gson.fromJson(innerJson, listType);
@@ -50,7 +42,7 @@ void main() throws IOException, InterruptedException {
     IO.println("Chatbot session ended.");
 }
 
-public static String jsonSchema (String history) {
+private static String jsonSchema (String history) {
     return """
                 {
                   "generationConfig": {
@@ -79,4 +71,16 @@ public static String jsonSchema (String history) {
                   }]
                 }
                 """.formatted(history);
+}
+
+private static String parseResponse(String response) {
+    JsonObject root = JsonParser.parseString(response).getAsJsonObject();
+
+    // Walks down the JSON tree to extract the necessary text field
+    return root.getAsJsonArray("candidates")
+            .get(0).getAsJsonObject()
+            .getAsJsonObject("content")
+            .getAsJsonArray("parts")
+            .get(0).getAsJsonObject()
+            .get("text").getAsString();
 }
