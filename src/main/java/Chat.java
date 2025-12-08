@@ -12,6 +12,8 @@ void main() throws IOException, InterruptedException {
     Type listType = new TypeToken<List<MedicalCode>>() {
     }.getType();
 
+    IO.println("-----Dx Coder: Medical Coding Assistant-----");
+
     while (true) {
         IO.print("You: ");
         String userInput = scanner.nextLine();
@@ -39,7 +41,7 @@ void main() throws IOException, InterruptedException {
         }
     }
     scanner.close();
-    IO.println("Chatbot session ended.");
+    IO.println("Chat session ended.");
 }
 
 private static String jsonSchema (String history) {
@@ -61,7 +63,7 @@ private static String jsonSchema (String history) {
                   },
                   "system_instruction": {
                     "parts": [{
-                      "text": "You are a medical coding assistant. Analyze the input and extract the relevant ICD-10-CM and CPT codes. If the input is NOT related to a medical scenario (like medical coding), return an empty list: []."
+                      "text": "You are a medical coding assistant. Analyze the input and extract the relevant ICD-10-CM, CPT, and external cause codes. If the input is NOT related to a medical scenario (like medical coding), return an empty list: []."
                     }]
                   },
                   "contents": [{
